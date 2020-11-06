@@ -55,11 +55,9 @@ def readArticleFrXl():
     body = ws["C" + str(rowCnt + 1)]
     user = ws["D" + str(rowCnt + 1)]
 
-    article = {"번호" : num, "제목" : title, "내용" : body, "작성자" : user }
-    return article
-
+    article = {"번호" : num, "제목" : title, "내용" : body, "작성자" : user}
     ws["B1"] = rowCnt + 1
-
+    return article
 
 
 ## Update posts in Xlsx
@@ -143,8 +141,9 @@ def readUserFrXlsx():
     saved_name = ws2["C" + str(rowCnt + 1)]
 
     saved_user = {"아이디": saved_id, "비밀번호" : saved_pw, "이름": saved_name}
-    return saved_user
     ws2["B1"] = rowCnt + 1
+    return saved_user
+
 
 
 ## Update user to Xlsx
