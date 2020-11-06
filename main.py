@@ -1,15 +1,10 @@
 ## Variables & Dictionaries
-
-article_list = []
-
-user1 = {"아이디": "hong123", "비밀번호": "1234", "이름": "홍길동"}
-user2 = {"아이디": "sony7", "비밀번호": "7777", "이름": "손흥민"}
-user3 = {"아이디": "ryu99", "비밀번호": "9999", "이름": "류현진"}
-
-user_list = []
-
-no = 4
-
+# article_list = []
+# user1 = {"아이디": "hong123", "비밀번호": "1234", "이름": "홍길동"}
+# user2 = {"아이디": "sony7", "비밀번호": "7777", "이름": "손흥민"}
+# user3 = {"아이디": "ryu99", "비밀번호": "9999", "이름": "류현진"}
+# user_list = []
+# no = 4
 ## =========================================================
 
 ## 게시물
@@ -55,7 +50,7 @@ def readArticleFrXl():
     body = ws["C" + str(rowCnt + 1)]
     user = ws["D" + str(rowCnt + 1)]
 
-    if title == None:
+    if title is None:
         return None
 
     else:
@@ -108,6 +103,7 @@ ws2["A2"] = "아이디"
 ws2["B2"] = "비밀번호"
 ws2["C2"] = "이름"
 
+
 wb.save("ArticleWB.xlsx")
 
 ## New user information
@@ -144,14 +140,13 @@ def readUserFrXlsx():
     saved_pw = ws2["B" + str(rowCnt + 1)]
     saved_name = ws2["C" + str(rowCnt + 1)]
 
-    if saved_name == None:
+    if saved_name is None:
         return None
 
     else:
         saved_user = {"아이디": saved_id, "비밀번호" : saved_pw, "이름": saved_name}
         ws2["B1"] = rowCnt + 1
         return saved_user
-
 
 
 ## Update user to Xlsx
@@ -193,18 +188,17 @@ def deleteUserFrXlsx(nm):
 
 
 def loginCheck(id, pw):
-    a = 0
-    for saved_user in readUserFrXlsx():
-        if saved_user["아이디"] == id:
-            if saved_user["비밀번호"] == pw:
-                print("{}님 반갑습니다!".format(saved_user["이름"]))
-                return True
+    user = readUserFrXlsx()
+    if user["아이디"] == id:
+        if user["비밀번호"] == pw:
+            print("{}님 반갑습니다!".format(user["이름"]))
+            return True
 
-            else:
-                print("비밀번호를 틀렸습니다")
-                return False
+        else:
+            print("비밀번호를 틀렸습니다")
+            return False
 
-    if a == 0:
+    else:
         print("없는 아이디입니다")
         return False
 
@@ -240,7 +234,7 @@ def getArticleNum():
 def updateArticle():
     target = getArticleNum()
 
-    if target == None:
+    if target is None:
         print("없는 게시물입니다.")
 
     else:
@@ -256,7 +250,7 @@ def updateArticle():
 def deleteArticle():
     target = getArticleNum()
 
-    if target == None:
+    if target is None:
         print("없는 게시물입니다.")
 
     else:
@@ -267,7 +261,7 @@ def deleteArticle():
 def detailArticle():
     target = getArticleNum()
 
-    if target == None:
+    if target is None:
         print("없는 게시물입니다.")
 
     else:
