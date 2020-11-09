@@ -10,19 +10,19 @@
 ## 게시물
 from openpyxl import Workbook, load_workbook
 
-wb = Workbook()
-ws = wb.active
-ws.title = "Articles"
-
-ws["A1"] = "rowCount"
-ws["B1"] = 2
-
-ws["A2"] = "번호"
-ws["B2"] = "제목"
-ws["C2"] = "내용"
-ws["D2"] = "작성자"
-
-wb.save("ArticleWB.xlsx")
+# wb = Workbook()
+# ws = wb.active
+# ws.title = "Articles"
+#
+# ws["A1"] = "rowCount"
+# ws["B1"] = 2
+#
+# ws["A2"] = "번호"
+# ws["B2"] = "제목"
+# ws["C2"] = "내용"
+# ws["D2"] = "작성자"
+#
+# wb.save("ArticleWB.xlsx")
 
 ## Save posts to Xlsx
 def writeArticleToXl(article):
@@ -40,74 +40,77 @@ def writeArticleToXl(article):
 
 
 ## Read posts from Xlsx
-def readArticleFrXl():
+def readArticleFrXl(num):
     wb = load_workbook("ArticleWB.xlsx")
     ws = wb.active
-    rowCnt = ws["B1"].value
 
-    num = ws["A" + str(rowCnt + 1)]
-    title = ws["B" + str(rowCnt + 1)]
-    body = ws["C" + str(rowCnt + 1)]
-    user = ws["D" + str(rowCnt + 1)]
+    for r in ws.rows:
+        row_index = r[0].value
+        if row_index == num:
+            title = r[1].value
+            body = r[2].value
+            user = r[3].value
 
-    if title is None:
-        return None
+            article = {"번호": num, "제목": title, "내용": body, "작성자": user}
+            return article
 
-    else:
-        article = {"번호": num, "제목": title, "내용": body, "작성자": user}
-        ws["B1"] = rowCnt + 1
-        return article
+
+    return None
 
 
 ## Update posts in Xlsx
-def updateArticleToXL(article):
+def updateArticleToXL(num, title, body):
     wb = load_workbook("ArticleWB.xlsx")
     ws = wb.active
-    rowCnt = ws["B1"].value
 
-    num = ws["A" + str(rowCnt + 1)]
 
-    if num == article["번호"]:
-        ws["B" + str(rowCnt + 1)] = article["제목"]
-        ws["C" + str(rowCnt + 1)] = article["내용"]
+    for r in ws.rows:
+        row_index = r[0].value
+        if row_index == num:
+            r[1].value = title
+            r[2].value = body
+            wb.save("ArticleWB.xlsx")
 
-    ws["B1"] = rowCnt + 1
-    wb.save("ArticleWB.xlsx")
+    return None
+
 
 
 ## Delete posts from Xlsx
-def deleteArticleFrXL(article):
+def deleteArticleFrXL(num):
     wb = load_workbook("ArticleWB.xlsx")
     ws = wb.active
-    rowCnt = ws["B1"].value
 
-    num = ws["A" + str(rowCnt + 1)]
 
-    if num == article["번호"]:
-        ws.delete_rows(rowCnt+1)
+    for r in ws.rows:
+        row_index = r[0].value
+        if row_index == num:
+            ws.delete_rows(r)
+            wb.save("ArticleWB.xlsx")
 
-    ws["B1"] = rowCnt + 1
-    wb.save("ArticleWB.xlsx")
+
+    return None
+
 
 
 ##==========================================================
 
 ## 작성자
-wb = load_workbook("ArticleWB.xlsx")
-ws2 = wb.create_sheet("Users")
-
-ws2["A1"] = "rowCount"
-ws2["B1"] = 2
-
-ws2["A2"] = "아이디"
-ws2["B2"] = "비밀번호"
-ws2["C2"] = "이름"
-
-
-wb.save("ArticleWB.xlsx")
+# wb = load_workbook("ArticleWB.xlsx")
+# ws2 = wb.create_sheet("Users")
+# ws2.title = "Users"
+#
+# ws2["A1"] = "rowCount"
+# ws2["B1"] = 2
+#
+# ws2["A2"] = "아이디"
+# ws2["B2"] = "비밀번호"
+# ws2["C2"] = "이름"
+#
+#
+# wb.save("ArticleWB.xlsx")
 
 ## New user information
-def newUserInfo():
+def newUserInfoToXl():
     id_info = input("등록할 아이디를 입력해 주세요 : ")
     pw_info = input("등록할 비밀번호를 입력해 주세요 : ")
     name_info = input("이름을 입력해 주세요 : ")
@@ -120,7 +123,7 @@ def newUserInfo():
 def addUserToXL(new_user):
     wb = load_workbook("ArticleWB.xlsx")
     ws2 = wb.active
-    rowCnt = ws["B1"].value
+    rowCnt = ws2["B1"].value
 
     ws2["A" + str(rowCnt + 1)] = new_user["아이디"]
     ws2["B" + str(rowCnt + 1)] = new_user["비밀번호"]
@@ -131,64 +134,39 @@ def addUserToXL(new_user):
 
 
 ## Read user from Xlsx
-def readUserFrXlsx():
+def readUserFrXlsx(id, pw):
     wb = load_workbook("ArticleWB.xlsx")
     ws2 = wb.active
-    rowCnt = ws2["B1"].value
 
-    saved_id = ws2["A" + str(rowCnt + 1)]
-    saved_pw = ws2["B" + str(rowCnt + 1)]
-    saved_name = ws2["C" + str(rowCnt + 1)]
 
-    if saved_name is None:
-        return None
+    for r in ws2.rows:
+        row_id = r[0].value
+        if row_id == id:
+            row_pw = r[1].value
+            row_name = r[2].value
+            user = {"아이디": row_id, "비밀번호": row_pw, "이름": row_name}
+            return user
 
-    else:
-        saved_user = {"아이디": saved_id, "비밀번호" : saved_pw, "이름": saved_name}
-        ws2["B1"] = rowCnt + 1
-        return saved_user
+    return None
 
 
 ## Update user to Xlsx
 def updateUserToXlsx(nm):
     wb = load_workbook("ArticleWB.xlsx")
     ws2 = wb.active
-    rowCnt = ws2["B1"].value
 
-    saved_name = ws2["C" + str(rowCnt + 1)]
-
-    if saved_name == nm:
-        new_id = input("새아이디를 입력해 주세요 : ")
-        new_pw = input("새비밀번호를 입력해 주세요 : ")
-
-        ws2["A" + str(rowCnt + 1)] = new_id
-        ws2["B" + str(rowCnt + 1)] = new_pw
-
-        print("입력하신 작성자 정보가 수정되었습니다.")
-
-    ws2["B1"] = rowCnt + 1
-    wb.save("ArticleWB.xlsx")
 
 ## Delete user from Xlsx
 def deleteUserFrXlsx(nm):
     wb = load_workbook("ArticleWB.xlsx")
     ws2 = wb.active
-    rowCnt = ws2["B1"].value
 
-    saved_name = ws2["C" + str(rowCnt + 1)]
-
-    if saved_name == nm:
-        ws2.delete_rows(rowCnt + 1)
-        print("입력하신 작성자가 삭제되었습니다.")
-
-    ws2["B1"] = rowCnt + 1
-    wb.save("ArticleWB.xlsx")
 
 # ==========================================================
 
 
 def loginCheck(id, pw):
-    user = readUserFrXlsx()
+    user = readUserFrXlsx(id, pw)
     if user["아이디"] == id:
         if user["비밀번호"] == pw:
             print("{}님 반갑습니다!".format(user["이름"]))
@@ -222,39 +200,31 @@ def addArticle():
 # Find the specified article from the list
 def getArticleNum():
     num = int(input("게시물 번호를 입력해주세요 : "))
-    target = None
-    article = readArticleFrXl()
-
-    if article["번호"] == num:
-        target = article
-
+    target = readArticleFrXl(num)
     return target
 
 
 def updateArticle():
-    target = getArticleNum()
+    num = int(input("게시물 번호를 입력해주세요 : "))
+    title = input("수정 제목 : ")
+    body = input("수정 내용 : ")
+    target = updateArticleToXL(num, title, body)
 
     if target is None:
         print("없는 게시물입니다.")
 
     else:
-        tle = input("수정 제목 : ")
-        bdy = input("수정 내용 : ")
-        target["제목"] = tle
-        target["내용"] = bdy
-        article = target
-        updateArticleToXL(article)
         print("수정이 완료되었습니다.")
 
 
 def deleteArticle():
-    target = getArticleNum()
+    num = int(input("게시물 번호를 입력해주세요 : "))
+    target = deleteArticleFrXL(num)
 
     if target is None:
         print("없는 게시물입니다.")
 
     else:
-        deleteArticleFrXL(target)
         print("삭제가 완료되었습니다.")
 
 
