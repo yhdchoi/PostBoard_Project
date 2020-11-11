@@ -50,13 +50,16 @@ def readArticleFrXl():
     wb = load_workbook("ArticleWB.xlsx")
     ws = wb["Articles"]
 
+    articles = []
     for r in ws.rows:
         row_index = r[0].row
         title = r[1].value
         body = r[2].value
         user = r[3].value
         article = {"번호": row_index, "제목": title, "내용": body, "작성자": user}
-        return article
+        articles.append(article)
+
+    return articles
 
 
 # Update posts in Xlsx
@@ -144,13 +147,26 @@ def addUserToXL(new_user):
     wb.save("ArticleWB.xlsx")
 
 
+def loginUserFrXlsx(user_id, user_pw):
+    wb = load_workbook("ArticleWB.xlsx")
+    ws2 = wb["Users"]
+
+    for r in ws2.rows:
+        row_id = r[1].value
+        row_pw = r[2].value
+        row_name = r[3].value
+        if row_id == user_id:
+            if row_pw == user_pw:
+                user_dict = {"아이디": row_id, "비밀번호": row_pw, "이름": row_name}
+                return user_dict
+
+
 # Read user from Xlsx
 def readUserFrXlsx(user_id, user_pw):
     wb = load_workbook("ArticleWB.xlsx")
     ws2 = wb["Users"]
 
     for r in ws2.rows:
-        row_index = r[0].row
         row_id = r[1].value
         row_pw = r[2].value
         row_name = r[3].value
@@ -230,7 +246,8 @@ def deleteUser():
 def printArticle():
     article = readArticleFrXl()
     print("=========== 게시물 목록 ==============")
-    print(article)
+    print("번호 : {}".format(article["번호"]))
+    print("제목 : {}".format(article["제목"]))
     print("=====================================")
 
 
@@ -241,13 +258,6 @@ def addArticle():
     article = {"번호": no, "제목": title, "내용": body, "작성자": login_id}
     writeArticleToXl(article)
     no += 1
-
-
-# Find the specified article from the list
-def getArticleNum():
-    num = int(input("게시물 번호를 입력해주세요 : "))
-    target = readArticleFrXl(num)
-    return target
 
 
 def updateArticle():
@@ -275,15 +285,17 @@ def deleteArticle():
 
 
 def detailArticle():
-    target = getArticleNum()
-
-    if target is None:
-        print("없는 게시물입니다.")
-
-    else:
+    articles = readArticleFrXl()
+    for article in articles:
         print("=========  게시물 목록  ==========")
-        print(target)
+        print("번호 : {}".format(article["번호"]))
+        print("제목 : {}".format(article["제목"]))
+        print("내용 : {}".format(article["내용"]))
+        print("작성자 : {}".format(article["작성자"]))
         print("=================================")
+
+    if articles is None:
+        print("게시물이 없습니다.")
 
 
 def printHelp():
@@ -307,7 +319,7 @@ loginResult = loginCheck(login_id, login_pw)
 
 if loginResult:
     while True:
-        cmd = input("명령어를 입력해 주세요.")
+        cmd = input("명령어를 입력해 주세요 :")
         if cmd == "exit":
             print("프로그램을 종료합니다.")
             break
